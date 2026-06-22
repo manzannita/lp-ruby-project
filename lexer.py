@@ -27,8 +27,11 @@ tokens = [
     'EQ', 'NEQ', 'LT', 'GT', 'LE', 'GE',
 
     # ── APORTE INTEGRANTE 3 ── Valentina Falconi ──────────────────────────
-    # (pendiente)
-
+    'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE',
+    'COMMA', 'DOT', 'COLON', 'ARROW', 'SEMICOLON',
+    'DOTDOTDOT', 'DOTDOT',
+    'COMMENT_SINGLE', 'COMMENT_MULTI',
+    
 ] + list(set(reserved.values()))
 
 
