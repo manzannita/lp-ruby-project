@@ -1,0 +1,201 @@
+Archivo fuente : algoritmos/algoritmo2.rb
+Desarrollador  : CristianIntriago
+Fecha/Hora     : 21-06-2026-22h32
+Total tokens   : 108
+Total errores  : 81
+============================================================
+#     TIPO                VALOR                         LINEA
+============================================================
+1     ID_LOCAL            algoritmo2                    1
+2     ID_LOCAL            rb                            1
+3     ID_CONSTANTE        A                             1
+4     ID_LOCAL            porte                         1
+5     ID_CONSTANTE        I                             1
+6     ID_LOCAL            ntegrante                     1
+7     INTEGER             2                             1
+8     ID_CONSTANTE        C                             1
+9     ID_LOCAL            ristian                       1
+10    ID_CONSTANTE        I                             1
+11    ID_LOCAL            ntriago                       1
+12    ID_CONSTANTE        O                             2
+13    ID_LOCAL            peradores                     2
+14    ID_LOCAL            aritm                         2
+15    ID_LOCAL            ticos                         2
+16    ID_LOCAL            asignaci                      2
+17    ID_LOCAL            n                             2
+18    ID_LOCAL            compuesta                     2
+19    ID_LOCAL            comparaci                     2
+20    ID_LOCAL            n                             2
+21    ID_LOCAL            l                             2
+22    ID_LOCAL            gicos                         2
+23    ID_CONSTANTE        H                             2
+24    ID_LOCAL            ash                           2
+25    ID_LOCAL            y                             2
+26    WHILE               while                         2
+27    ID_LOCAL            contador                      4
+28    INTEGER             0                             4
+29    ID_LOCAL            acumulador                    5
+30    INTEGER             10                            5
+31    ID_LOCAL            resultado                     6
+32    INTEGER             0                             6
+33    ID_LOCAL            base                          7
+34    INTEGER             2                             7
+35    ID_LOCAL            exponente                     8
+36    INTEGER             3                             8
+37    ID_LOCAL            datos                         10
+38    STRING              "a"                           11
+39    INTEGER             5                             11
+40    STRING              "b"                           12
+41    INTEGER             3                             12
+42    STRING              "c"                           13
+43    INTEGER             8                             13
+44    WHILE               while                         16
+45    ID_LOCAL            contador                      16
+46    INTEGER             4                             16
+47    ID_LOCAL            acumulador                    16
+48    INTEGER             0                             16
+49    ID_LOCAL            suma                          17
+50    ID_LOCAL            datos                         17
+51    STRING              "a"                           17
+52    ID_LOCAL            datos                         17
+53    STRING              "b"                           17
+54    ID_LOCAL            resta                         18
+55    ID_LOCAL            datos                         18
+56    STRING              "c"                           18
+57    ID_LOCAL            contador                      18
+58    ID_LOCAL            producto                      19
+59    ID_LOCAL            suma                          19
+60    ID_LOCAL            base                          19
+61    ID_LOCAL            division                      20
+62    ID_LOCAL            producto                      20
+63    ID_LOCAL            contador                      20
+64    INTEGER             1                             20
+65    ID_LOCAL            modulo                        21
+66    ID_LOCAL            acumulador                    21
+67    INTEGER             3                             21
+68    ID_LOCAL            potencia                      22
+69    ID_LOCAL            base                          22
+70    ID_LOCAL            exponente                     22
+71    ID_LOCAL            resultado                     24
+72    ID_LOCAL            suma                          24
+73    ID_LOCAL            resultado                     25
+74    ID_LOCAL            contador                      25
+75    ID_LOCAL            resultado                     26
+76    INTEGER             2                             26
+77    ID_LOCAL            resultado                     27
+78    INTEGER             3                             27
+79    IF                  if                            29
+80    ID_LOCAL            suma                          29
+81    INTEGER             8                             29
+82    ID_LOCAL            resta                         29
+83    NOT_OP2             !                             29
+84    INTEGER             0                             29
+85    PIPE                |                             29
+86    PIPE                |                             29
+87    NOT_OP2             !                             29
+88    ID_LOCAL            division                      29
+89    INTEGER             10                            29
+90    ID_LOCAL            puts                          30
+91    STRING              "Iteración #{contador}: #{resultado}, #{division}, #{modulo}, #{potencia}"30
+92    END                 end                           31
+93    ID_LOCAL            contador                      33
+94    INTEGER             1                             33
+95    ID_LOCAL            acumulador                    34
+96    INTEGER             2                             34
+97    END                 end                           35
+98    IF                  if                            37
+99    ID_LOCAL            resultado                     37
+100   INTEGER             100                           37
+101   ID_LOCAL            resultado                     37
+102   INTEGER             0                             37
+103   ID_LOCAL            puts                          38
+104   STRING              "Resultado final: #{resultado}"38
+105   ELSE                else                          39
+106   ID_LOCAL            puts                          40
+107   STRING              "Resultado fuera de rango"    40
+108   END                 end                           41
+
+============================================================
+ERRORES LÉXICOS
+============================================================
+  Línea 1: Carácter ilegal '#' en línea 1
+  Línea 1: Carácter ilegal '.' en línea 1
+  Línea 1: Carácter ilegal ':' en línea 1
+  Línea 2: Carácter ilegal '#' en línea 2
+  Línea 2: Carácter ilegal 'é' en línea 2
+  Línea 2: Carácter ilegal ',' en línea 2
+  Línea 2: Carácter ilegal 'ó' en línea 2
+  Línea 2: Carácter ilegal ',' en línea 2
+  Línea 2: Carácter ilegal 'ó' en línea 2
+  Línea 2: Carácter ilegal ',' en línea 2
+  Línea 2: Carácter ilegal 'ó' en línea 2
+  Línea 2: Carácter ilegal ',' en línea 2
+  Línea 4: Carácter ilegal '=' en línea 4
+  Línea 5: Carácter ilegal '=' en línea 5
+  Línea 6: Carácter ilegal '=' en línea 6
+  Línea 7: Carácter ilegal '=' en línea 7
+  Línea 8: Carácter ilegal '=' en línea 8
+  Línea 10: Carácter ilegal '=' en línea 10
+  Línea 10: Carácter ilegal '{' en línea 10
+  Línea 11: Carácter ilegal '=' en línea 11
+  Línea 11: Carácter ilegal '>' en línea 11
+  Línea 11: Carácter ilegal ',' en línea 11
+  Línea 12: Carácter ilegal '=' en línea 12
+  Línea 12: Carácter ilegal '>' en línea 12
+  Línea 12: Carácter ilegal ',' en línea 12
+  Línea 13: Carácter ilegal '=' en línea 13
+  Línea 13: Carácter ilegal '>' en línea 13
+  Línea 14: Carácter ilegal '}' en línea 14
+  Línea 16: Carácter ilegal '<' en línea 16
+  Línea 16: Carácter ilegal '&' en línea 16
+  Línea 16: Carácter ilegal '&' en línea 16
+  Línea 16: Carácter ilegal '>' en línea 16
+  Línea 16: Carácter ilegal '=' en línea 16
+  Línea 17: Carácter ilegal '=' en línea 17
+  Línea 17: Carácter ilegal '[' en línea 17
+  Línea 17: Carácter ilegal ']' en línea 17
+  Línea 17: Carácter ilegal '+' en línea 17
+  Línea 17: Carácter ilegal '[' en línea 17
+  Línea 17: Carácter ilegal ']' en línea 17
+  Línea 18: Carácter ilegal '=' en línea 18
+  Línea 18: Carácter ilegal '[' en línea 18
+  Línea 18: Carácter ilegal ']' en línea 18
+  Línea 18: Carácter ilegal '-' en línea 18
+  Línea 19: Carácter ilegal '=' en línea 19
+  Línea 19: Carácter ilegal '*' en línea 19
+  Línea 20: Carácter ilegal '=' en línea 20
+  Línea 20: Carácter ilegal '/' en línea 20
+  Línea 20: Carácter ilegal '(' en línea 20
+  Línea 20: Carácter ilegal '+' en línea 20
+  Línea 20: Carácter ilegal ')' en línea 20
+  Línea 21: Carácter ilegal '=' en línea 21
+  Línea 21: Carácter ilegal '%' en línea 21
+  Línea 22: Carácter ilegal '=' en línea 22
+  Línea 22: Carácter ilegal '*' en línea 22
+  Línea 22: Carácter ilegal '*' en línea 22
+  Línea 24: Carácter ilegal '+' en línea 24
+  Línea 24: Carácter ilegal '=' en línea 24
+  Línea 25: Carácter ilegal '-' en línea 25
+  Línea 25: Carácter ilegal '=' en línea 25
+  Línea 26: Carácter ilegal '*' en línea 26
+  Línea 26: Carácter ilegal '=' en línea 26
+  Línea 27: Carácter ilegal '/' en línea 27
+  Línea 27: Carácter ilegal '=' en línea 27
+  Línea 29: Carácter ilegal '=' en línea 29
+  Línea 29: Carácter ilegal '=' en línea 29
+  Línea 29: Carácter ilegal '&' en línea 29
+  Línea 29: Carácter ilegal '&' en línea 29
+  Línea 29: Carácter ilegal '=' en línea 29
+  Línea 29: Carácter ilegal '(' en línea 29
+  Línea 29: Carácter ilegal '>' en línea 29
+  Línea 29: Carácter ilegal ')' en línea 29
+  Línea 33: Carácter ilegal '+' en línea 33
+  Línea 33: Carácter ilegal '=' en línea 33
+  Línea 34: Carácter ilegal '-' en línea 34
+  Línea 34: Carácter ilegal '=' en línea 34
+  Línea 37: Carácter ilegal '<' en línea 37
+  Línea 37: Carácter ilegal '=' en línea 37
+  Línea 37: Carácter ilegal '&' en línea 37
+  Línea 37: Carácter ilegal '&' en línea 37
+  Línea 37: Carácter ilegal '>' en línea 37
+  Línea 37: Carácter ilegal '=' en línea 37
