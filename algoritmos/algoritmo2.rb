@@ -1,5 +1,5 @@
-# algoritmo2.rb — Aporte Integrante 2: Cristian Intriago
-# Ejercita: operadores aritméticos, asignación compuesta, comparación, lógicos, Hash y while
+# algoritmo2.rb  Aporte Integrante 2: Cristian Intriago
+# Operadores aritméticos, asignación compuesta, comparación, lógicos, Hash y while
 
 contador = 0
 acumulador = 10
