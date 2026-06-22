@@ -1,0 +1,300 @@
+Archivo fuente : algoritmos/algoritmo3.rb
+Desarrollador  : ValentinaFalconi
+Fecha/Hora     : 21-06-2026-22h58
+Total tokens   : 292
+Total errores  : 0
+============================================================
+#     TIPO                VALOR                         LINEA
+============================================================
+1     COMMENT_SINGLE      # algoritmo3.rb  Aporte Integrante 3: Valentina Falconi1
+2     COMMENT_SINGLE      # ejercita: delimitadores, rangos, comentarios2
+3     COMMENT_SINGLE      # Funcion que saluda con un nombre (parametro opcional)4
+4     DEF                 def                           5
+5     ID_LOCAL            saludar                       5
+6     LPAREN              (                             5
+7     ID_LOCAL            nombre                        5
+8     ASSIGN              =                             5
+9     STRING              "mundo"                       5
+10    RPAREN              )                             5
+11    ID_LOCAL            puts                          6
+12    STRING              "Hola, #{nombre}!"            6
+13    END                 end                           7
+14    COMMENT_SINGLE      # Funcion que suma elementos de un arreglo9
+15    DEF                 def                           10
+16    ID_LOCAL            sumar_elementos               10
+17    LPAREN              (                             10
+18    ID_LOCAL            arreglo                       10
+19    RPAREN              )                             10
+20    ID_LOCAL            total                         11
+21    ASSIGN              =                             11
+22    INTEGER             0                             11
+23    ID_LOCAL            arreglo                       12
+24    DOT                 .                             12
+25    EACH                each                          12
+26    DO                  do                            12
+27    PIPE                |                             12
+28    ID_LOCAL            elemento                      12
+29    PIPE                |                             12
+30    ID_LOCAL            total                         13
+31    ASSIGN              =                             13
+32    ID_LOCAL            total                         13
+33    PLUS                +                             13
+34    ID_LOCAL            elemento                      13
+35    END                 end                           14
+36    ID_LOCAL            total                         15
+37    END                 end                           16
+38    COMMENT_SINGLE      # Funcion que filtra valores dentro de un rango inclusivo18
+39    DEF                 def                           19
+40    ID_LOCAL            en_rango_inclusivo            19
+41    LPAREN              (                             19
+42    ID_LOCAL            valores                       19
+43    COMMA               ,                             19
+44    ID_LOCAL            inicio                        19
+45    COMMA               ,                             19
+46    ID_LOCAL            fin_rango                     19
+47    RPAREN              )                             19
+48    ID_LOCAL            resultado                     20
+49    ASSIGN              =                             20
+50    LBRACKET            [                             20
+51    RBRACKET            ]                             20
+52    ID_LOCAL            valores                       21
+53    DOT                 .                             21
+54    EACH                each                          21
+55    DO                  do                            21
+56    PIPE                |                             21
+57    ID_LOCAL            v                             21
+58    PIPE                |                             21
+59    IF                  if                            22
+60    ID_LOCAL            v                             22
+61    GE                  >=                            22
+62    ID_LOCAL            inicio                        22
+63    AND_OP              &&                            22
+64    ID_LOCAL            v                             22
+65    LE                  <=                            22
+66    ID_LOCAL            fin_rango                     22
+67    ID_LOCAL            resultado                     23
+68    DOT                 .                             23
+69    ID_LOCAL            push                          23
+70    LPAREN              (                             23
+71    ID_LOCAL            v                             23
+72    RPAREN              )                             23
+73    END                 end                           24
+74    END                 end                           25
+75    ID_LOCAL            resultado                     26
+76    END                 end                           27
+77    COMMENT_SINGLE      # Funcion que filtra valores dentro de un rango exclusivo29
+78    DEF                 def                           30
+79    ID_LOCAL            en_rango_exclusivo            30
+80    LPAREN              (                             30
+81    ID_LOCAL            valores                       30
+82    COMMA               ,                             30
+83    ID_LOCAL            inicio                        30
+84    COMMA               ,                             30
+85    ID_LOCAL            fin_rango                     30
+86    RPAREN              )                             30
+87    ID_LOCAL            resultado                     31
+88    ASSIGN              =                             31
+89    LBRACKET            [                             31
+90    RBRACKET            ]                             31
+91    ID_LOCAL            valores                       32
+92    DOT                 .                             32
+93    EACH                each                          32
+94    DO                  do                            32
+95    PIPE                |                             32
+96    ID_LOCAL            v                             32
+97    PIPE                |                             32
+98    IF                  if                            33
+99    ID_LOCAL            v                             33
+100   GE                  >=                            33
+101   ID_LOCAL            inicio                        33
+102   AND_OP              &&                            33
+103   ID_LOCAL            v                             33
+104   LT                  <                             33
+105   ID_LOCAL            fin_rango                     33
+106   ID_LOCAL            resultado                     34
+107   DOT                 .                             34
+108   ID_LOCAL            push                          34
+109   LPAREN              (                             34
+110   ID_LOCAL            v                             34
+111   RPAREN              )                             34
+112   END                 end                           35
+113   END                 end                           36
+114   ID_LOCAL            resultado                     37
+115   END                 end                           38
+116   COMMENT_SINGLE      # --- Programa principal ---  40
+117   COMMENT_SINGLE      # Uso de parentesis, coma y llamada a funcion42
+118   ID_LOCAL            saludar                       43
+119   LPAREN              (                             43
+120   STRING              "Valentina"                   43
+121   RPAREN              )                             43
+122   ID_LOCAL            saludar                       44
+123   LPAREN              (                             44
+124   RPAREN              )                             44
+125   COMMENT_SINGLE      # Uso de corchetes para definir arreglo46
+126   ID_LOCAL            numeros                       47
+127   ASSIGN              =                             47
+128   LBRACKET            [                             47
+129   INTEGER             1                             47
+130   COMMA               ,                             47
+131   INTEGER             2                             47
+132   COMMA               ,                             47
+133   INTEGER             3                             47
+134   COMMA               ,                             47
+135   INTEGER             4                             47
+136   COMMA               ,                             47
+137   INTEGER             5                             47
+138   COMMA               ,                             47
+139   INTEGER             6                             47
+140   COMMA               ,                             47
+141   INTEGER             7                             47
+142   COMMA               ,                             47
+143   INTEGER             8                             47
+144   COMMA               ,                             47
+145   INTEGER             9                             47
+146   COMMA               ,                             47
+147   INTEGER             10                            47
+148   RBRACKET            ]                             47
+149   COMMENT_SINGLE      # Rango inclusivo con ..      49
+150   ID_LOCAL            rango_inclusivo               50
+151   ASSIGN              =                             50
+152   INTEGER             1                             50
+153   DOTDOT              ..                            50
+154   INTEGER             10                            50
+155   ID_LOCAL            puts                          51
+156   STRING              "Rango inclusivo: #{rango_inclusivo}"51
+157   COMMENT_SINGLE      # Rango exclusivo con ...     53
+158   ID_LOCAL            rango_exclusivo               54
+159   ASSIGN              =                             54
+160   INTEGER             1                             54
+161   DOTDOTDOT           ...                           54
+162   INTEGER             10                            54
+163   ID_LOCAL            puts                          55
+164   STRING              "Rango exclusivo: #{rango_exclusivo}"55
+165   COMMENT_SINGLE      # Uso de each con rango inclusivo57
+166   ID_LOCAL            puts                          58
+167   STRING              "Numeros del 1 al 5 (inclusivo):"58
+168   LPAREN              (                             59
+169   INTEGER             1                             59
+170   DOTDOT              ..                            59
+171   INTEGER             5                             59
+172   RPAREN              )                             59
+173   DOT                 .                             59
+174   EACH                each                          59
+175   DO                  do                            59
+176   PIPE                |                             59
+177   ID_LOCAL            n                             59
+178   PIPE                |                             59
+179   ID_LOCAL            puts                          60
+180   ID_LOCAL            n                             60
+181   END                 end                           61
+182   COMMENT_SINGLE      # Uso de each con rango exclusivo63
+183   ID_LOCAL            puts                          64
+184   STRING              "Numeros del 1 al 5 (exclusivo del 5):"64
+185   LPAREN              (                             65
+186   INTEGER             1                             65
+187   DOTDOTDOT           ...                           65
+188   INTEGER             5                             65
+189   RPAREN              )                             65
+190   DOT                 .                             65
+191   EACH                each                          65
+192   DO                  do                            65
+193   PIPE                |                             65
+194   ID_LOCAL            n                             65
+195   PIPE                |                             65
+196   ID_LOCAL            puts                          66
+197   ID_LOCAL            n                             66
+198   END                 end                           67
+199   COMMENT_SINGLE      # Uso de llaves para hash (diccionario)69
+200   ID_LOCAL            persona                       70
+201   ASSIGN              =                             70
+202   LBRACE              {                             70
+203   ID_LOCAL            nombre                        70
+204   COLON               :                             70
+205   STRING              "Valentina"                   70
+206   COMMA               ,                             70
+207   ID_LOCAL            edad                          70
+208   COLON               :                             70
+209   INTEGER             21                            70
+210   COMMA               ,                             70
+211   ID_LOCAL            ciudad                        70
+212   COLON               :                             70
+213   STRING              "Guayaquil"                   70
+214   RBRACE              }                             70
+215   ID_LOCAL            puts                          71
+216   ID_LOCAL            persona                       71
+217   LBRACKET            [                             71
+218   SYMBOL              :nombre                       71
+219   RBRACKET            ]                             71
+220   ID_LOCAL            puts                          72
+221   ID_LOCAL            persona                       72
+222   LBRACKET            [                             72
+223   SYMBOL              :ciudad                       72
+224   RBRACKET            ]                             72
+225   COMMENT_SINGLE      # Uso de punto para acceder a metodos74
+226   ID_LOCAL            texto                         75
+227   ASSIGN              =                             75
+228   STRING              "hola mundo"                  75
+229   ID_LOCAL            puts                          76
+230   ID_LOCAL            texto                         76
+231   DOT                 .                             76
+232   ID_LOCAL            upcase                        76
+233   ID_LOCAL            puts                          77
+234   ID_LOCAL            texto                         77
+235   DOT                 .                             77
+236   ID_LOCAL            length                        77
+237   COMMENT_SINGLE      # Suma de elementos del arreglo79
+238   ID_LOCAL            total                         80
+239   ASSIGN              =                             80
+240   ID_LOCAL            sumar_elementos               80
+241   LPAREN              (                             80
+242   ID_LOCAL            numeros                       80
+243   RPAREN              )                             80
+244   ID_LOCAL            puts                          81
+245   STRING              "Suma total: #{total}"        81
+246   COMMENT_SINGLE      # Filtros con rangos          83
+247   ID_LOCAL            dentro_inclusivo              84
+248   ASSIGN              =                             84
+249   ID_LOCAL            en_rango_inclusivo            84
+250   LPAREN              (                             84
+251   ID_LOCAL            numeros                       84
+252   COMMA               ,                             84
+253   INTEGER             3                             84
+254   COMMA               ,                             84
+255   INTEGER             7                             84
+256   RPAREN              )                             84
+257   ID_LOCAL            puts                          85
+258   STRING              "Dentro de 3..7: #{dentro_inclusivo}"85
+259   ID_LOCAL            dentro_exclusivo              87
+260   ASSIGN              =                             87
+261   ID_LOCAL            en_rango_exclusivo            87
+262   LPAREN              (                             87
+263   ID_LOCAL            numeros                       87
+264   COMMA               ,                             87
+265   INTEGER             3                             87
+266   COMMA               ,                             87
+267   INTEGER             7                             87
+268   RPAREN              )                             87
+269   ID_LOCAL            puts                          88
+270   STRING              "Dentro de 3...7: #{dentro_exclusivo}"88
+271   COMMENT_SINGLE      # Uso de dos puntos como simbolo90
+272   ID_LOCAL            etiqueta                      91
+273   ASSIGN              =                             91
+274   SYMBOL              :activo                       91
+275   ID_LOCAL            puts                          92
+276   STRING              "Estado: #{etiqueta}"         92
+277   COMMENT_SINGLE      # Uso de punto y coma (separador de sentencias)94
+278   ID_LOCAL            a                             95
+279   ASSIGN              =                             95
+280   INTEGER             10                            95
+281   SEMICOLON           ;                             95
+282   ID_LOCAL            b                             95
+283   ASSIGN              =                             95
+284   INTEGER             20                            95
+285   SEMICOLON           ;                             95
+286   ID_LOCAL            c                             95
+287   ASSIGN              =                             95
+288   ID_LOCAL            a                             95
+289   PLUS                +                             95
+290   ID_LOCAL            b                             95
+291   ID_LOCAL            puts                          96
+292   STRING              "a + b = #{c}"                96
