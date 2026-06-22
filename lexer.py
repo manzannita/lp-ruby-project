@@ -19,6 +19,8 @@ tokens = [
     # --- INTEGRANTE 1 ---
     'ID_LOCAL', 'ID_CONSTANTE', 'ID_INSTANCIA', 'ID_GLOBAL',
     'INTEGER', 'FLOAT', 'STRING', 'SYMBOL',
+    # --- INTEGRANTE 1 extra ---
+    'PIPE', 'QUESTION', 'NOT_OP2',
     # --- INTEGRANTE 2 ---
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'POWER',
     'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN',
@@ -66,6 +68,11 @@ def t_ID_CONSTANTE(t):
     r'[A-Z][A-Z0-9_]*'
     return t
 
+def t_ID_LOCAL_Q(t):
+    r'[a-z_][a-zA-Z0-9_]*[?!]'
+    t.type = 'ID_LOCAL'
+    return t
+
 def t_ID_LOCAL(t):
     r'[a-z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID_LOCAL')
@@ -93,6 +100,9 @@ t_TIMES         = r'\*'
 t_DIVIDE        = r'/'
 t_MODULO        = r'%'
 t_ASSIGN        = r'='
+t_PIPE          = r'\|'
+t_QUESTION      = r'\?'
+t_NOT_OP2       = r'!'
 
 # =============================================================================
 # APORTE INTEGRANTE 3 — Valentina Falconi
@@ -153,7 +163,6 @@ def generate_log(filepath):
     tokens_list = tokenize_file(filepath)
     now = datetime.now().strftime('%d-%m-%Y-%Hh%M')
     base = os.path.splitext(os.path.basename(filepath))[0]
-    # Detectar nombre según archivo
     names = {
         'algoritmo1': 'AnnabellaSanchez',
         'algoritmo2': 'CristianIntriago',
@@ -167,7 +176,7 @@ def generate_log(filepath):
         f.write(f'Fecha/Hora     : {now}\n')
         f.write(f'Total tokens   : {len(tokens_list)}\n')
         f.write('=' * 60 + '\n')
-        f.write(f'{"#":<6}{"TIPO":<20}{"VALOR":<30}{"LÍNEA"}\n')
+        f.write(f'{"#":<6}{"TIPO":<20}{"VALOR":<30}{"LINEA"}\n')
         f.write('=' * 60 + '\n')
         for i, tok in enumerate(tokens_list, 1):
             f.write(f'{i:<6}{tok.type:<20}{str(tok.value):<30}{tok.lineno}\n')
