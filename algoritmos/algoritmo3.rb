@@ -94,3 +94,7 @@ puts "Estado: #{etiqueta}"
 # Uso de punto y coma (separador de sentencias)
 a = 10; b = 20; c = a + b
 puts "a + b = #{c}"
+
+# Uso de hash con arrow (=>)
+colores = { "rojo" => 1, "azul" => 2, "verde" => 3 }
+puts colores["rojo"]

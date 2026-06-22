@@ -1,7 +1,7 @@
 Archivo fuente : algoritmos/algoritmo3.rb
 Desarrollador  : ValentinaFalconi
-Fecha/Hora     : 21-06-2026-22h58
-Total tokens   : 292
+Fecha/Hora     : 21-06-2026-23h23
+Total tokens   : 313
 Total errores  : 0
 ============================================================
 #     TIPO                VALOR                         LINEA
@@ -298,3 +298,24 @@ Total errores  : 0
 290   ID_LOCAL            b                             95
 291   ID_LOCAL            puts                          96
 292   STRING              "a + b = #{c}"                96
+293   COMMENT_SINGLE      # Uso de hash con arrow (=>)  98
+294   ID_LOCAL            colores                       99
+295   ASSIGN              =                             99
+296   LBRACE              {                             99
+297   STRING              "rojo"                        99
+298   ARROW               =>                            99
+299   INTEGER             1                             99
+300   COMMA               ,                             99
+301   STRING              "azul"                        99
+302   ARROW               =>                            99
+303   INTEGER             2                             99
+304   COMMA               ,                             99
+305   STRING              "verde"                       99
+306   ARROW               =>                            99
+307   INTEGER             3                             99
+308   RBRACE              }                             99
+309   ID_LOCAL            puts                          100
+310   ID_LOCAL            colores                       100
+311   LBRACKET            [                             100
+312   STRING              "rojo"                        100
+313   RBRACKET            ]                             100
