@@ -1,0 +1,152 @@
+Archivo fuente : algoritmo1.rb
+Fecha/Hora     : 22-06-2026-02h27
+Total tokens   : 146
+============================================================
+#     TIPO                VALOR                         LÍNEA
+============================================================
+1     COMMENT_SINGLE      # algoritmo1.rb — Aporte Integrante 1: Annabella Sánchez1
+2     COMMENT_SINGLE      # Ejercita: variables, tipos primitivos, Array, if/elsif/else, función con retorno2
+3     COMMENT_SINGLE      # --- Constante ---           4
+4     ID_CONSTANTE        MAX_NOTA                      5
+5     ASSIGN              =                             5
+6     INTEGER             10                            5
+7     COMMENT_SINGLE      # --- Variable global ---     7
+8     ID_GLOBAL           $escuela                      8
+9     ASSIGN              =                             8
+10    STRING              "ESPOL"                       8
+11    COMMENT_SINGLE      # --- Función con parámetro y retorno ---10
+12    DEF                 def                           11
+13    ID_LOCAL            calificar                     11
+14    LPAREN              (                             11
+15    ID_LOCAL            nota                          11
+16    COMMA               ,                             11
+17    ID_LOCAL            max                           11
+18    ASSIGN              =                             11
+19    ID_CONSTANTE        MAX_NOTA                      11
+20    RPAREN              )                             11
+21    ID_LOCAL            porcentaje                    12
+22    ASSIGN              =                             12
+23    LPAREN              (                             12
+24    ID_LOCAL            nota                          12
+25    DOT                 .                             12
+26    ID_LOCAL            to_f                          12
+27    DIVIDE              /                             12
+28    ID_LOCAL            max                           12
+29    RPAREN              )                             12
+30    TIMES               *                             12
+31    INTEGER             100                           12
+32    IF                  if                            14
+33    ID_LOCAL            porcentaje                    14
+34    GE                  >=                            14
+35    INTEGER             90                            14
+36    RETURN              return                        15
+37    STRING              "Excelente"                   15
+38    ELSIF               elsif                         16
+39    ID_LOCAL            porcentaje                    16
+40    GE                  >=                            16
+41    INTEGER             70                            16
+42    RETURN              return                        17
+43    STRING              "Aprobado"                    17
+44    ELSIF               elsif                         18
+45    ID_LOCAL            porcentaje                    18
+46    GE                  >=                            18
+47    INTEGER             50                            18
+48    RETURN              return                        19
+49    STRING              "Suficiente"                  19
+50    ELSE                else                          20
+51    RETURN              return                        21
+52    STRING              "Reprobado"                   21
+53    END                 end                           22
+54    END                 end                           23
+55    COMMENT_SINGLE      # --- Tipos primitivos ---    25
+56    ID_LOCAL            nombre                        26
+57    ASSIGN              =                             26
+58    STRING              "Annabella"                   26
+59    ID_LOCAL            edad                          27
+60    ASSIGN              =                             27
+61    INTEGER             21                            27
+62    ID_LOCAL            promedio                      28
+63    ASSIGN              =                             28
+64    FLOAT               9.5                           28
+65    ID_LOCAL            activo                        29
+66    ASSIGN              =                             29
+67    BOOLEAN             true                          29
+68    ID_LOCAL            dato                          30
+69    ASSIGN              =                             30
+70    NIL                 nil                           30
+71    ID_LOCAL            estado                        31
+72    ASSIGN              =                             31
+73    SYMBOL              :matriculado                  31
+74    COMMENT_SINGLE      # --- Variable de instancia (usada dentro de contexto de clase simplificado) ---33
+75    ID_INSTANCIA        @carrera                      34
+76    ASSIGN              =                             34
+77    STRING              "Ingeniería en Ciencias de la Computación"34
+78    COMMENT_SINGLE      # --- Array con distintos tipos ---36
+79    ID_LOCAL            info_estudiante               37
+80    ASSIGN              =                             37
+81    LBRACKET            [                             37
+82    ID_LOCAL            nombre                        37
+83    COMMA               ,                             37
+84    ID_LOCAL            edad                          37
+85    COMMA               ,                             37
+86    ID_LOCAL            promedio                      37
+87    COMMA               ,                             37
+88    ID_LOCAL            activo                        37
+89    COMMA               ,                             37
+90    ID_LOCAL            dato                          37
+91    COMMA               ,                             37
+92    ID_LOCAL            estado                        37
+93    RBRACKET            ]                             37
+94    COMMENT_SINGLE      # --- Recorrer el Array ---   39
+95    ID_LOCAL            info_estudiante               40
+96    DOT                 .                             40
+97    EACH                each                          40
+98    DO                  do                            40
+99    PIPE                |                             40
+100   ID_LOCAL            elemento                      40
+101   PIPE                |                             40
+102   IF                  if                            41
+103   ID_LOCAL            elemento                      41
+104   DOT                 .                             41
+105   ID_LOCAL            nil?                          41
+106   ID_LOCAL            puts                          42
+107   STRING              "Valor: nil"                  42
+108   ELSE                else                          43
+109   ID_LOCAL            puts                          44
+110   STRING              "Valor: #{elemento}"          44
+111   END                 end                           45
+112   END                 end                           46
+113   COMMENT_SINGLE      # --- Usar la función ---     48
+114   ID_LOCAL            notas                         49
+115   ASSIGN              =                             49
+116   LBRACKET            [                             49
+117   INTEGER             10                            49
+118   COMMA               ,                             49
+119   INTEGER             8                             49
+120   COMMA               ,                             49
+121   INTEGER             6                             49
+122   COMMA               ,                             49
+123   INTEGER             4                             49
+124   COMMA               ,                             49
+125   INTEGER             9                             49
+126   RBRACKET            ]                             49
+127   ID_LOCAL            notas                         50
+128   DOT                 .                             50
+129   EACH                each                          50
+130   DO                  do                            50
+131   PIPE                |                             50
+132   ID_LOCAL            n                             50
+133   PIPE                |                             50
+134   ID_LOCAL            resultado                     51
+135   ASSIGN              =                             51
+136   ID_LOCAL            calificar                     51
+137   LPAREN              (                             51
+138   ID_LOCAL            n                             51
+139   RPAREN              )                             51
+140   ID_LOCAL            puts                          52
+141   STRING              "Nota #{n}/#{MAX_NOTA} → #{resultado}"52
+142   END                 end                           53
+143   ID_LOCAL            puts                          55
+144   STRING              "Escuela: #{$escuela}"        55
+145   ID_LOCAL            puts                          56
+146   STRING              "Carrera: #{@carrera}"        56

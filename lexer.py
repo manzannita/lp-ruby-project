@@ -19,6 +19,8 @@ tokens = [
     # --- INTEGRANTE 1 ---
     'ID_LOCAL', 'ID_CONSTANTE', 'ID_INSTANCIA', 'ID_GLOBAL',
     'INTEGER', 'FLOAT', 'STRING', 'SYMBOL',
+    # --- INTEGRANTE 1 extra ---
+    'PIPE', 'QUESTION', 'NOT_OP2',
     # --- INTEGRANTE 2 ---
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'POWER',
     'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN',
@@ -66,6 +68,11 @@ def t_ID_CONSTANTE(t):
     r'[A-Z][A-Z0-9_]*'
     return t
 
+def t_ID_LOCAL_Q(t):
+    r'[a-z_][a-zA-Z0-9_]*[?!]'
+    t.type = 'ID_LOCAL'
+    return t
+
 def t_ID_LOCAL(t):
     r'[a-z_][a-zA-Z0-9_]*'
     t.type = reserved.get(t.value, 'ID_LOCAL')
@@ -93,6 +100,9 @@ t_TIMES         = r'\*'
 t_DIVIDE        = r'/'
 t_MODULO        = r'%'
 t_ASSIGN        = r'='
+t_PIPE          = r'\|'
+t_QUESTION      = r'\?'
+t_NOT_OP2       = r'!'
 
 # =============================================================================
 # APORTE INTEGRANTE 3 — Valentina Falconi
