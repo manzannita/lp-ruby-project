@@ -19,13 +19,12 @@ tokens = [
     # ── APORTE INTEGRANTE 1 ── Annabella Sánchez ──────────────────────────
     'ID_LOCAL', 'ID_CONSTANTE', 'ID_INSTANCIA', 'ID_GLOBAL',
     'INTEGER', 'FLOAT', 'STRING', 'SYMBOL',
-    'PIPE', 'QUESTION', 'NOT_OP2',
+    'PIPE', 'QUESTION',
 
     # ── APORTE INTEGRANTE 2 ── Cristian Intriago ──────────────────────────
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'POWER',
     'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN',
     'EQ', 'NEQ', 'LT', 'GT', 'LE', 'GE',
-    'AND_OP2', 'OR_OP2',
 
     # ── APORTE INTEGRANTE 3 ── Valentina Falconi ──────────────────────────
     # (pendiente)
@@ -80,7 +79,6 @@ def t_ID_LOCAL(t):
 
 t_PIPE     = r'\|'
 t_QUESTION = r'\?'
-t_NOT_OP2  = r'!'
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 1 — Annabella Sánchez
@@ -101,8 +99,8 @@ t_EQ            = r'=='
 t_NEQ           = r'!='
 t_LE            = r'<='
 t_GE            = r'>='
-t_AND_OP2       = r'&&'
-t_OR_OP2        = r'\|\|'
+t_AND_OP        = r'&&'
+t_OR_OP         = r'\|\|'
 
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
@@ -112,6 +110,7 @@ t_MODULO  = r'%'
 t_ASSIGN  = r'='
 t_LT      = r'<'
 t_GT      = r'>'
+t_NOT_OP  = r'!'
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 2 — Cristian Intriago
