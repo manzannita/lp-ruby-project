@@ -101,7 +101,29 @@ t_NOT_OP2  = r'!'
 # Delimitadores, comentarios, rangos y newline
 # =============================================================================
 
-# (pendiente — Valentina agrega aquí sus tokens)
+
+t_ARROW         = r'=>'
+t_DOTDOTDOT     = r'\.\.\.'
+t_DOTDOT        = r'\.\.'
+t_DOT           = r'\.'
+t_LPAREN        = r'\('
+t_RPAREN        = r'\)'
+t_LBRACKET      = r'\['
+t_RBRACKET      = r'\]'
+t_LBRACE        = r'\{'
+t_RBRACE        = r'\}'
+t_COMMA         = r','
+t_COLON         = r':'
+t_SEMICOLON     = r';'
+
+def t_COMMENT_MULTI(t):
+    r'=begin[\s\S]*?=end'
+    t.lexer.lineno += t.value.count('\n')
+    return t
+
+def t_COMMENT_SINGLE(t):
+    r'\#[^\n]*'
+    return t
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 3 — Valentina Falconi
