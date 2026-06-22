@@ -118,7 +118,15 @@ def t_newline(t):
 t_ignore = ' \t\r'
 
 def t_error(t):
-    print(f"[ERROR] Carácter ilegal '{t.value[0]}' en línea {t.lexer.lineno}")
+    msg = f"Carácter ilegal '{t.value[0]}' en línea {t.lexer.lineno}"
+    print(f"[ERROR] {msg}")
+    if not hasattr(t.lexer, 'errores'):
+        t.lexer.errores = []
+    t.lexer.errores.append({
+        'mensaje': msg,
+        'linea': t.lexer.lineno,
+        'char': t.value[0],
+    })
     t.lexer.skip(1)
 
 
@@ -126,40 +134,65 @@ def t_error(t):
 # INSTANCIA DEL LEXER
 # =============================================================================
 lexer = lex.lex()
+lexer.errores = []
+
+
+# =============================================================================
+# FUNCIÓN PÚBLICA PARA LA INTERFAZ GRÁFICA
+# Retorna lista de dicts: {tipo, valor, linea, pos}
+# =============================================================================
+def analizar(codigo, nombre_dev=""):
+    lexer.errores = []
+    lexer.lineno = 1
+    lexer.input(codigo)
+    tokens_list = []
+    for tok in lexer:
+        tokens_list.append({
+            'tipo': tok.type,
+            'valor': str(tok.value),
+            'linea': tok.lineno,
+            'pos': tok.lexpos,
+        })
+    return tokens_list
 
 
 def tokenize_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         source = f.read()
-    lexer.input(source)
-    tokens_list = []
-    for tok in lexer:
-        tokens_list.append(tok)
-    return tokens_list
+    return analizar(source)
 
 
-def generate_log(filepath):
+_author_names = {
+    'algoritmo1': 'AnnabellaSanchez',
+    'algoritmo2': 'CristianIntriago',
+    'algoritmo3': 'ValentinaFalconi',
+}
+
+def generate_log(filepath, nombre_dev=""):
     tokens_list = tokenize_file(filepath)
     now = datetime.now().strftime('%d-%m-%Y-%Hh%M')
     base = os.path.splitext(os.path.basename(filepath))[0]
-    names = {
-        'algoritmo1': 'AnnabellaSanchez',
-        'algoritmo2': 'CristianIntriago',
-        'algoritmo3': 'ValentinaFalconi',
-    }
-    author = names.get(base, 'Desconocido')
+    author = nombre_dev or _author_names.get(base, 'Desconocido')
     os.makedirs('logs', exist_ok=True)
     log_name = f'logs/lexico-{author}-{now}.txt'
 
     with open(log_name, 'w', encoding='utf-8') as f:
         f.write(f'Archivo fuente : {filepath}\n')
+        f.write(f'Desarrollador  : {author}\n')
         f.write(f'Fecha/Hora     : {now}\n')
         f.write(f'Total tokens   : {len(tokens_list)}\n')
+        f.write(f'Total errores  : {len(lexer.errores)}\n')
         f.write('=' * 60 + '\n')
         f.write(f'{"#":<6}{"TIPO":<20}{"VALOR":<30}{"LINEA"}\n')
         f.write('=' * 60 + '\n')
         for i, tok in enumerate(tokens_list, 1):
-            f.write(f'{i:<6}{tok.type:<20}{str(tok.value):<30}{tok.lineno}\n')
+            f.write(f'{i:<6}{tok["tipo"]:<20}{tok["valor"]:<30}{tok["linea"]}\n')
+        if lexer.errores:
+            f.write('\n' + '=' * 60 + '\n')
+            f.write('ERRORES LÉXICOS\n')
+            f.write('=' * 60 + '\n')
+            for err in lexer.errores:
+                f.write(f'  Línea {err["linea"]}: {err["mensaje"]}\n')
 
     print(f'Log generado: {log_name}')
     return log_name
