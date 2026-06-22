@@ -27,6 +27,27 @@ lp-ruby-project/
 └── logs/              # Logs de salida generados por el lexer
 ```
 
+## Formato de archivos
+
+Cada integrante debe respetar el siguiente formato al nombrar y ubicar sus archivos.
+
+**Algoritmo de prueba** — guardar en la carpeta `algoritmos/`:
+```
+algoritmos/algoritmoN.rb
+```
+Donde `N` es el número de integrante (1, 2 o 3). Ejemplo: `algoritmos/algoritmo2.rb`.
+
+**Log léxico** — guardar en la carpeta `logs/`:
+```
+logs/lexico-NombreApellido-DD-MM-YYYY-HHhMM.txt
+```
+Donde `NombreApellido` es el nombre del integrante sin espacios ni tildes, y la fecha/hora corresponde al momento de ejecución del lexer. Ejemplos:
+```
+logs/lexico-AnnabellaSanchez-22-06-2026-14h30.txt
+logs/lexico-CristianIntriago-22-06-2026-15h00.txt
+logs/lexico-ValentinaFalconi-22-06-2026-15h30.txt
+```
+
 ## Cómo ejecutar
 
 Requiere Python 3 y la librería PLY:
