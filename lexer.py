@@ -22,7 +22,10 @@ tokens = [
     'PIPE', 'QUESTION', 'NOT_OP2',
 
     # ── APORTE INTEGRANTE 2 ── Cristian Intriago ──────────────────────────
-    # (pendiente)
+    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'MODULO', 'POWER',
+    'ASSIGN', 'PLUS_ASSIGN', 'MINUS_ASSIGN', 'TIMES_ASSIGN', 'DIVIDE_ASSIGN',
+    'EQ', 'NEQ', 'LT', 'GT', 'LE', 'GE',
+    'AND_OP2', 'OR_OP2',
 
     # ── APORTE INTEGRANTE 3 ── Valentina Falconi ──────────────────────────
     # (pendiente)
@@ -89,7 +92,26 @@ t_NOT_OP2  = r'!'
 # Operadores aritméticos, de asignación, comparación y lógicos
 # =============================================================================
 
-# (pendiente — Cristian agrega aquí sus tokens)
+t_POWER         = r'\*\*'
+t_PLUS_ASSIGN   = r'\+='
+t_MINUS_ASSIGN  = r'-='
+t_TIMES_ASSIGN  = r'\*='
+t_DIVIDE_ASSIGN = r'/='
+t_EQ            = r'=='
+t_NEQ           = r'!='
+t_LE            = r'<='
+t_GE            = r'>='
+t_AND_OP2       = r'&&'
+t_OR_OP2        = r'\|\|'
+
+t_PLUS    = r'\+'
+t_MINUS   = r'-'
+t_TIMES   = r'\*'
+t_DIVIDE  = r'/'
+t_MODULO  = r'%'
+t_ASSIGN  = r'='
+t_LT      = r'<'
+t_GT      = r'>'
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 2 — Cristian Intriago
