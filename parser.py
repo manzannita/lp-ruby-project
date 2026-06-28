@@ -180,6 +180,51 @@ def p_parte_else_vacia(p):
     p[0] = None
 
 
+# ── Definición de función con retorno  (issue #16) ───────────────────────────
+def p_sentencia_definicion(p):
+    'sentencia : definicion_funcion'
+    p[0] = p[1]
+
+
+def p_definicion_funcion(p):
+    'definicion_funcion : DEF ID_LOCAL parametros cuerpo END'
+    p[0] = ('def', p[2], p[3], p[4])
+
+
+def p_parametros_con_parentesis(p):
+    '''parametros : LPAREN lista_parametros RPAREN
+                  | LPAREN RPAREN'''
+    p[0] = p[2] if len(p) == 4 else []
+
+
+def p_parametros_sin_parentesis(p):
+    'parametros : empty'
+    p[0] = []
+
+
+# Lista de parámetros posicionales simples. Los integrantes 2 (*args) y 3
+# (parámetro opcional con valor por defecto) extienden 'lista_parametros'.
+def p_lista_parametros(p):
+    '''lista_parametros : lista_parametros COMMA ID_LOCAL
+                        | ID_LOCAL'''
+    if len(p) == 4:
+        p[0] = p[1] + [p[3]]
+    else:
+        p[0] = [p[1]]
+
+
+# ── Sentencia return  (issue #16) ────────────────────────────────────────────
+def p_sentencia_retorno(p):
+    'sentencia : retorno'
+    p[0] = p[1]
+
+
+def p_retorno(p):
+    '''retorno : RETURN expresion
+               | RETURN'''
+    p[0] = ('return', p[2] if len(p) == 3 else None)
+
+
 # ── Expresiones base / primarios (andamiaje para todos los integrantes) ──────
 # El Integrante 2 amplía 'expresion' con operadores aritméticos/booleanos y el
 # Integrante 3 con rangos; todos se apoyan en estos primarios.
@@ -214,6 +259,18 @@ def p_primario_agrupado(p):
 def p_primario_llamada(p):
     'primario : llamada_funcion'
     p[0] = p[1]
+
+
+# ── Literal Array  (issue #16) ───────────────────────────────────────────────
+def p_primario_arreglo(p):
+    'primario : arreglo'
+    p[0] = p[1]
+
+
+def p_arreglo(p):
+    '''arreglo : LBRACKET RBRACKET
+               | LBRACKET lista_expresiones RBRACKET'''
+    p[0] = ('array', [] if len(p) == 3 else p[2])
 
 
 # ── Llamada a función con paréntesis:  nombre(args) ──────────────────────────
