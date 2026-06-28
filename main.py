@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 
 import lexer as ruby_lexer
+import parser as ruby_parser
 
 # =============================================================================
 # CONSTANTES DE ESTILO
@@ -259,6 +260,145 @@ class TabLexico(tk.Frame):
 
 
 # =============================================================================
+# PESTAÑA SINTÁCTICO
+# =============================================================================
+class TabSintactico(tk.Frame):
+    def __init__(self, parent, status_cb):
+        super().__init__(parent, bg=BG_MAIN)
+        self.status_cb = status_cb
+        self._build()
+
+    def _build(self):
+        paned = tk.PanedWindow(self, orient="horizontal",
+                               bg=BG_MAIN, sashwidth=5,
+                               sashrelief="flat", bd=0)
+        paned.pack(fill="both", expand=True, padx=8, pady=8)
+
+        # ── PANEL IZQUIERDO: editor ────────────────────────────────────────
+        left = tk.Frame(paned, bg=BG_MAIN)
+        paned.add(left, minsize=300)
+
+        tk.Label(left, text="Código Ruby", bg=BG_MAIN, fg=FG_MAIN,
+                 font=FONT_UI).pack(anchor="w", pady=(0, 4))
+
+        self.editor = CodeEditor(left)
+        self.editor.pack(fill="both", expand=True)
+
+        btn_frame = tk.Frame(left, bg=BG_MAIN)
+        btn_frame.pack(fill="x", pady=(6, 0))
+        self._btn(btn_frame, "📂 Cargar .rb", self._cargar).pack(
+            side="left", padx=(0, 6))
+        self._btn(btn_frame, "🗑 Limpiar", self._limpiar).pack(
+            side="left", padx=(0, 6))
+        self._btn(btn_frame, "▶ Analizar", self._analizar,
+                  accent=True).pack(side="left")
+
+        # ── PANEL DERECHO: estado + errores ────────────────────────────────
+        right = tk.Frame(paned, bg=BG_MAIN)
+        paned.add(right, minsize=340)
+
+        tk.Label(right, text="Resultado del análisis", bg=BG_MAIN, fg=FG_MAIN,
+                 font=FONT_UI).pack(anchor="w", pady=(0, 4))
+
+        self.estado_var = tk.StringVar(value="Sin analizar")
+        self.estado_lbl = tk.Label(right, textvariable=self.estado_var,
+                                   bg="#1e1e1e", fg="#888888", anchor="w",
+                                   font=("Segoe UI", 11, "bold"),
+                                   padx=10, pady=8)
+        self.estado_lbl.pack(fill="x", pady=(0, 8))
+
+        tk.Label(right, text="Errores sintácticos", bg=BG_MAIN, fg=FG_MAIN,
+                 font=FONT_UI).pack(anchor="w", pady=(0, 4))
+
+        tree_frame = tk.Frame(right, bg=BG_MAIN)
+        tree_frame.pack(fill="both", expand=True)
+
+        cols = ("#", "Línea", "Columna", "Token", "Mensaje")
+        self.tree = ttk.Treeview(tree_frame, columns=cols, show="headings",
+                                 style="Dark.Treeview", selectmode="browse")
+        for c, w, anchor in (("#", 40, "center"), ("Línea", 56, "center"),
+                             ("Columna", 64, "center"), ("Token", 110, "w"),
+                             ("Mensaje", 320, "w")):
+            self.tree.heading(c, text=c)
+            self.tree.column(c, width=w, anchor=anchor,
+                             stretch=(c == "Mensaje"))
+        self.tree.tag_configure("odd", background=BG_ROW_A)
+        self.tree.tag_configure("even", background=BG_ROW_B)
+
+        vsb = ttk.Scrollbar(tree_frame, orient="vertical",
+                            command=self.tree.yview)
+        self.tree.configure(yscrollcommand=vsb.set)
+        vsb.pack(side="right", fill="y")
+        self.tree.pack(fill="both", expand=True)
+
+    # ── helpers ────────────────────────────────────────────────────────────
+    def _btn(self, parent, text, cmd, accent=False):
+        bg = FG_ACCENT if accent else "#3c3c3c"
+        b = tk.Button(parent, text=text, command=cmd,
+                      bg=bg, fg="#ffffff",
+                      activebackground="#a00d24" if accent else "#505050",
+                      activeforeground="#ffffff", relief="flat",
+                      font=FONT_UI, padx=10, pady=4, cursor="hand2",
+                      bd=0, highlightthickness=0)
+        return b
+
+    def _cargar(self):
+        path = filedialog.askopenfilename(
+            title="Abrir archivo Ruby",
+            filetypes=[("Ruby files", "*.rb"), ("All files", "*.*")])
+        if path:
+            with open(path, "r", encoding="utf-8") as f:
+                self.editor.set(f.read())
+            self.status_cb(f"Archivo cargado: {os.path.basename(path)}")
+
+    def _limpiar(self):
+        self.editor.clear()
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.estado_var.set("Sin analizar")
+        self.estado_lbl.config(fg="#888888")
+        self.status_cb("Listo")
+
+    def _analizar(self):
+        codigo = self.editor.get().strip()
+        if not codigo:
+            messagebox.showwarning("Sin código",
+                                   "Escribe o carga código Ruby primero.")
+            return
+
+        self.status_cb("Analizando sintaxis...")
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+        self.update_idletasks()
+
+        try:
+            resultado = ruby_parser.analizar(codigo)
+            errores = resultado["errores"]
+
+            if resultado["ok"]:
+                self.estado_var.set("✔  Código sintácticamente VÁLIDO")
+                self.estado_lbl.config(fg="#5fd35f")
+            else:
+                self.estado_var.set(
+                    f"✘  CON ERRORES — {len(errores)} error(es) de sintaxis")
+                self.estado_lbl.config(fg=FG_ERROR)
+
+            for i, err in enumerate(errores):
+                tag = "even" if i % 2 == 0 else "odd"
+                self.tree.insert("", "end", values=(
+                    i + 1, err["linea"], err["columna"],
+                    err["token"], err["mensaje"]
+                ), tags=(tag,))
+
+            self.status_cb(
+                "Análisis sintáctico correcto" if resultado["ok"]
+                else f"{len(errores)} error(es) de sintaxis")
+        except Exception as e:
+            messagebox.showerror("Error interno", str(e))
+            self.status_cb("Error durante el análisis")
+
+
+# =============================================================================
 # PESTAÑA PRÓXIMAMENTE
 # =============================================================================
 class TabProximamente(tk.Frame):
@@ -313,7 +453,9 @@ class App(tk.Tk):
         self.tab_lexico = TabLexico(nb, self._set_status)
         nb.add(self.tab_lexico, text="  Léxico  ")
 
-        nb.add(TabProximamente(nb, "Sintáctico"), text="  Sintáctico  ")
+        self.tab_sintactico = TabSintactico(nb, self._set_status)
+        nb.add(self.tab_sintactico, text="  Sintáctico  ")
+
         nb.add(TabProximamente(nb, "Semántico"),  text="  Semántico  ")
 
         # ── Barra inferior ────────────────────────────────────────────────
