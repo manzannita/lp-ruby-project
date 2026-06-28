@@ -130,6 +130,56 @@ def p_sentencia_expresion(p):
     p[0] = p[1]
 
 
+# ── Asignación simple:  x = expr  (issue #15) ────────────────────────────────
+def p_sentencia_asignacion(p):
+    'sentencia : asignacion_simple'
+    p[0] = p[1]
+
+
+def p_asignacion_simple(p):
+    'asignacion_simple : lhs ASSIGN expresion'
+    p[0] = ('asignacion', p[1], p[3])
+
+
+def p_lhs(p):
+    '''lhs : ID_LOCAL
+           | ID_CONSTANTE
+           | ID_INSTANCIA
+           | ID_GLOBAL'''
+    p[0] = ('var', p[1])
+
+
+# ── Condicional if / elsif / else / end  (issue #15) ─────────────────────────
+def p_sentencia_condicional(p):
+    'sentencia : condicional'
+    p[0] = p[1]
+
+
+def p_condicional(p):
+    'condicional : IF expresion cuerpo lista_elsif parte_else END'
+    p[0] = ('if', p[2], p[3], p[4], p[5])
+
+
+def p_lista_elsif(p):
+    'lista_elsif : lista_elsif ELSIF expresion cuerpo'
+    p[0] = p[1] + [('elsif', p[3], p[4])]
+
+
+def p_lista_elsif_vacia(p):
+    'lista_elsif : empty'
+    p[0] = []
+
+
+def p_parte_else(p):
+    'parte_else : ELSE cuerpo'
+    p[0] = ('else', p[2])
+
+
+def p_parte_else_vacia(p):
+    'parte_else : empty'
+    p[0] = None
+
+
 # ── Expresiones base / primarios (andamiaje para todos los integrantes) ──────
 # El Integrante 2 amplía 'expresion' con operadores aritméticos/booleanos y el
 # Integrante 3 con rangos; todos se apoyan en estos primarios.
