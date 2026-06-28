@@ -31,7 +31,9 @@ tokens = [
     'COMMA', 'DOT', 'COLON', 'ARROW', 'SEMICOLON',
     'DOTDOTDOT', 'DOTDOT',
     'COMMENT_SINGLE', 'COMMENT_MULTI',
-    
+
+    # ── COMÚN ── separador de sentencias (lo consume el analizador sintáctico)
+    'NEWLINE',
 ] + list(set(reserved.values()))
 
 
@@ -160,6 +162,10 @@ def t_COMMENT_SINGLE(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
+    # Se emite como token NEWLINE para que el analizador sintáctico pueda
+    # separar sentencias. La pestaña Léxico lo filtra en analizar().
+    t.type = 'NEWLINE'
+    return t
 
 t_ignore = ' \t\r'
 
@@ -193,6 +199,8 @@ def analizar(codigo, nombre_dev=""):
     lexer.input(codigo)
     tokens_list = []
     for tok in lexer:
+        if tok.type == 'NEWLINE':   # separador interno: no se muestra en la fase léxica
+            continue
         tokens_list.append({
             'tipo': tok.type,
             'valor': str(tok.value),
