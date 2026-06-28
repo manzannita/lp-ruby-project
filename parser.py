@@ -365,7 +365,29 @@ def p_lista_lhs_base(p):
 def p_lista_lhs_extendida(p):
     'lista_lhs : lista_lhs COMMA lhs'
     p[0] = p[1] + [p[3]]
-    
+
+#issue #21: Bucle for y Iteración each
+# ── Bucle for: for n in 1..10 ... end ────────────────────────────────────────
+def p_sentencia_for(p):
+    'sentencia : FOR ID_LOCAL IN expresion cuerpo END'
+    p[0] = ('para', p[2], p[4], p[5])
+
+# ── Iteración each: arreglo.each do |n| ... end ──────────────────────────────
+def p_sentencia_each(p):
+    'sentencia : expresion DOT EACH DO PIPE ID_LOCAL PIPE cuerpo END'
+    p[0] = ('cada', p[1], p[6], p[8])
+
+# ── Parámetro opcional con valor por defecto ─────────────────────────────────
+def p_lista_parametros_opcional_unico(p):
+    'lista_parametros : ID_LOCAL ASSIGN expresion'
+    p[0] = [('param_opcional', p[1], p[3])]
+
+def p_lista_parametros_opcional_extendida(p):
+    'lista_parametros : lista_parametros COMMA ID_LOCAL ASSIGN expresion'
+    p[0] = p[1] + [('param_opcional', p[3], p[5])]
+
+
+
 # =============================================================================
 # FIN APORTE INTEGRANTE 3 — Valentina Falconi
 # =============================================================================
