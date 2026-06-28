@@ -343,8 +343,29 @@ def p_error(p):
 #  'lista_parametros'.)
 # =============================================================================
 
-# (pendiente)
+#issue #20: Asignación múltiple y Rango
+# ── Literal Range: 1..10 y 1...10 ────────────────────────────────────────────
+def p_expresion_rango_inclusivo(p):
+    'expresion : expresion DOTDOT expresion'
+    p[0] = ('rango_inclusivo', p[1], p[3])
 
+def p_expresion_rango_exclusivo(p):
+    'expresion : expresion DOTDOTDOT expresion'
+    p[0] = ('rango_exclusivo', p[1], p[3])
+
+# ── Asignación múltiple: a, b = 1, 2 ─────────────────────────────────────────
+def p_sentencia_asignacion_multiple(p):
+    'sentencia : lista_lhs ASSIGN lista_expresiones'
+    p[0] = ('asignacion_multiple', p[1], p[3])
+
+def p_lista_lhs_base(p):
+    'lista_lhs : lhs COMMA lhs'
+    p[0] = [p[1], p[3]]
+
+def p_lista_lhs_extendida(p):
+    'lista_lhs : lista_lhs COMMA lhs'
+    p[0] = p[1] + [p[3]]
+    
 # =============================================================================
 # FIN APORTE INTEGRANTE 3 — Valentina Falconi
 # =============================================================================
