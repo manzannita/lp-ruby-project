@@ -342,6 +342,43 @@ def p_expresion_aritmetica_binaria(p):
                  | expresion POWER expresion'''
     p[0] = ('binop', p[2], p[1], p[3])
 
+#issue #18: Expresiones booleanas y asignación con operador
+# ── Comparación: == != < > <= >= ─────────────────────────────────────────────
+def p_expresion_comparacion(p):
+    '''expresion : expresion EQ expresion
+                 | expresion NEQ expresion
+                 | expresion LT expresion
+                 | expresion GT expresion
+                 | expresion LE expresion
+                 | expresion GE expresion'''
+    p[0] = ('binop', p[2], p[1], p[3])
+
+
+# ── Lógicos: && || ! y and or not (mismos tokens en el lexer) ────────────────
+def p_expresion_logica_binaria(p):
+    '''expresion : expresion AND_OP expresion
+                 | expresion OR_OP expresion'''
+    p[0] = ('binop', p[2], p[1], p[3])
+
+
+def p_expresion_logica_negacion(p):
+    'expresion : NOT_OP expresion'
+    p[0] = ('not', p[2])
+
+
+# ── Asignación con operador: x += 1, x -= 1, x *= 2, x /= 2 ──────────────────
+def p_sentencia_asignacion_operador(p):
+    'sentencia : asignacion_operador'
+    p[0] = p[1]
+
+
+def p_asignacion_operador(p):
+    '''asignacion_operador : lhs PLUS_ASSIGN expresion
+                           | lhs MINUS_ASSIGN expresion
+                           | lhs TIMES_ASSIGN expresion
+                           | lhs DIVIDE_ASSIGN expresion'''
+    p[0] = ('asignacion_operador', p[2], p[1], p[3])
+
 # =============================================================================
 # FIN APORTE INTEGRANTE 2 — Cristian Intriago
 # =============================================================================
