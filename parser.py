@@ -386,7 +386,16 @@ def p_lista_parametros_opcional_extendida(p):
     'lista_parametros : lista_parametros COMMA ID_LOCAL ASSIGN expresion'
     p[0] = p[1] + [('param_opcional', p[3], p[5])]
 
+#issue #22: impresión y solicitud de datos
+# ── Llamada a método encadenado: gets.chomp ───────────────────────────────────
+def p_primario_llamada_metodo(p):
+    'primario : ID_LOCAL DOT ID_LOCAL'
+    p[0] = ('llamada_metodo', p[1], p[3])
 
+# ── Impresión sin paréntesis: puts "Hola", print "texto" ─────────────────────
+def p_sentencia_comando(p):
+    'sentencia : ID_LOCAL expresion'
+    p[0] = ('comando', p[1], p[2])
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 3 — Valentina Falconi
