@@ -379,6 +379,48 @@ def p_asignacion_operador(p):
                            | lhs DIVIDE_ASSIGN expresion'''
     p[0] = ('asignacion_operador', p[2], p[1], p[3])
 
+#issue #19: Hash, bucle while y función con n argumentos
+# ── Literal Hash: { "nombre" => "Ana" } (incluye hash vacío {}) ──────────────
+def p_primario_hash(p):
+    'primario : hash'
+    p[0] = p[1]
+
+
+def p_hash(p):
+    '''hash : LBRACE RBRACE
+            | LBRACE lista_pares RBRACE'''
+    p[0] = ('hash', [] if len(p) == 3 else p[2])
+
+
+def p_lista_pares(p):
+    '''lista_pares : lista_pares COMMA par
+                   | par'''
+    if len(p) == 4:
+        p[0] = p[1] + [p[3]]
+    else:
+        p[0] = [p[1]]
+
+
+def p_par(p):
+    'par : expresion ARROW expresion'
+    p[0] = (p[1], p[3])
+
+
+# ── Bucle while: while cond ... end ──────────────────────────────────────────
+def p_sentencia_while(p):
+    'sentencia : WHILE expresion cuerpo END'
+    p[0] = ('mientras', p[2], p[3])
+
+
+# ── Función con número variable de argumentos: def suma(*numeros) ───────────
+def p_lista_parametros_splat(p):
+    '''lista_parametros : TIMES ID_LOCAL
+                        | lista_parametros COMMA TIMES ID_LOCAL'''
+    if len(p) == 3:
+        p[0] = [('param_splat', p[2])]
+    else:
+        p[0] = p[1] + [('param_splat', p[4])]
+
 # =============================================================================
 # FIN APORTE INTEGRANTE 2 — Cristian Intriago
 # =============================================================================
