@@ -9,10 +9,12 @@ from datetime import datetime
 reserved = {
     'if': 'IF', 'elsif': 'ELSIF', 'else': 'ELSE', 'end': 'END',
     'while': 'WHILE', 'for': 'FOR', 'in': 'IN', 'do': 'DO',
+    'until': 'UNTIL', 'unless': 'UNLESS', 'break': 'BREAK', 'next': 'NEXT',
     'def': 'DEF', 'return': 'RETURN', 'class': 'CLASS', 'module': 'MODULE',
     'true': 'BOOLEAN', 'false': 'BOOLEAN', 'nil': 'NIL',
     'and': 'AND_OP', 'or': 'OR_OP', 'not': 'NOT_OP',
     'each': 'EACH',
+    'puts': 'PUTS', 'print': 'PRINT', 'gets': 'GETS',
 }
 
 tokens = [
