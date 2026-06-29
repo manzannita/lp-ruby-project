@@ -328,7 +328,19 @@ def p_error(p):
 #  'lista_parametros'.)
 # =============================================================================
 
-# (pendiente)
+#issue #17: Expresiones aritméticas con precedencia de operadores
+# ── Operadores binarios: + - * / % ** ────────────────────────────────────────
+# La precedencia y asociatividad se toman de la tabla 'precedence' definida en
+# el bloque del Integrante 1: ** (mayor) > * / % > + - (menor). El paréntesis
+# para alterar el orden ya está cubierto por 'primario : LPAREN expresion RPAREN'.
+def p_expresion_aritmetica_binaria(p):
+    '''expresion : expresion PLUS expresion
+                 | expresion MINUS expresion
+                 | expresion TIMES expresion
+                 | expresion DIVIDE expresion
+                 | expresion MODULO expresion
+                 | expresion POWER expresion'''
+    p[0] = ('binop', p[2], p[1], p[3])
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 2 — Cristian Intriago
