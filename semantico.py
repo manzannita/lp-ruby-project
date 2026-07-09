@@ -318,9 +318,16 @@ class AnalizadorSemantico:
                        self._linea(nodo[2]))
 
     def _v_llamada_metodo(self, nodo):
-        # ('llamada_metodo', objeto, metodo)  — p.ej. nota.to_f, gets.chomp
+        # ('llamada_metodo', objeto, metodo[, args])  — nota.to_f, resultado.push(v)
         # El objeto es una expresión: al visitarla se verifican sus identificadores.
         self.visitar(nodo[1])
+        if len(nodo) >= 4:
+            self._visitar_lista(nodo[3])
+
+    def _v_indexar(self, nodo):
+        # ('indexar', objeto, indice)  — datos["a"], persona[:clave]
+        self.visitar(nodo[1])
+        self.visitar(nodo[2])
 
     def _v_gets(self, nodo):
         # ('gets',)  — lectura de entrada; no hay identificadores que verificar.

@@ -16,19 +16,39 @@ from lexer import tokens, lexer  # tokens y lexer de la fase léxica
 # =============================================================================
 class _LexerSintactico:
     """Envuelve el lexer y omite los tokens de comentario, que no forman
-    parte de la gramática. Conserva NEWLINE y SEMICOLON como separadores."""
+    parte de la gramática. Conserva NEWLINE y SEMICOLON como separadores.
+
+    Además lleva la cuenta de la anidación de delimitadores: en Ruby los
+    saltos de línea dentro de (), [] o {} son continuaciones, no separadores
+    de sentencia, por lo que se omiten mientras haya delimitadores abiertos
+    (permite hashes, arreglos y llamadas escritos en varias líneas)."""
     _OMITIR = {'COMMENT_SINGLE', 'COMMENT_MULTI'}
+    _ABRE   = {'LPAREN', 'LBRACKET', 'LBRACE'}
+    _CIERRA = {'RPAREN', 'RBRACKET', 'RBRACE'}
 
     def __init__(self, base):
         self.base = base
+        self._profundidad = 0
 
     def input(self, data):
+        self._profundidad = 0
         self.base.input(data)
 
     def token(self):
         tok = self.base.token()
-        while tok is not None and tok.type in self._OMITIR:
-            tok = self.base.token()
+        while tok is not None:
+            if tok.type in self._OMITIR:
+                tok = self.base.token()
+                continue
+            if tok.type == 'NEWLINE' and self._profundidad > 0:
+                tok = self.base.token()
+                continue
+            break
+        if tok is not None:
+            if tok.type in self._ABRE:
+                self._profundidad += 1
+            elif tok.type in self._CIERRA and self._profundidad > 0:
+                self._profundidad -= 1
         return tok
 
     def __getattr__(self, name):
@@ -407,6 +427,19 @@ def p_par(p):
     p[0] = (p[1], p[3])
 
 
+# ── Par con clave simbólica abreviada:  { nombre: "Ana" } ────────────────────
+# La clave 'nombre:' equivale al símbolo :nombre (no es un uso de variable).
+def p_par_simbolo(p):
+    'par : ID_LOCAL COLON expresion'
+    p[0] = (('literal', ':' + p[1], p.lineno(1)), p[3])
+
+
+# ── Indexación de estructuras:  datos["a"], numeros[i], persona[:clave] ──────
+def p_primario_indexar(p):
+    'primario : primario LBRACKET expresion RBRACKET'
+    p[0] = ('indexar', p[1], p[3])
+
+
 # ── Bucle while: while cond ... end ──────────────────────────────────────────
 def p_sentencia_while(p):
     'sentencia : WHILE expresion cuerpo END'
@@ -481,12 +514,20 @@ def p_lista_parametros_opcional_extendida(p):
     p[0] = p[1] + [('param_opcional', p[3], p[5])]
 
 #issue #22: impresión y solicitud de datos
-# ── Llamada a método encadenada:  objeto.metodo  (p.ej. nota.to_f, gets.chomp)
+# ── Llamada a método encadenada:  objeto.metodo  y  objeto.metodo(args) ──────
+# (p.ej. nota.to_f, gets.chomp, texto.upcase, resultado.push(v))
 # Left-recursiva sobre 'primario' para admitir cadenas (a.b.c) y compartir el
 # prefijo con la iteración each.
 def p_primario_llamada_metodo(p):
-    'primario : primario DOT ID_LOCAL'
-    p[0] = ('llamada_metodo', p[1], p[3])
+    '''primario : primario DOT ID_LOCAL
+                | primario DOT ID_LOCAL LPAREN RPAREN
+                | primario DOT ID_LOCAL LPAREN lista_expresiones RPAREN'''
+    if len(p) == 4:
+        p[0] = ('llamada_metodo', p[1], p[3], [])
+    elif len(p) == 6:
+        p[0] = ('llamada_metodo', p[1], p[3], [])
+    else:
+        p[0] = ('llamada_metodo', p[1], p[3], p[5])
 
 # ── Entrada de datos:  gets  (y gets.chomp vía la regla de método) ───────────
 def p_primario_gets(p):
