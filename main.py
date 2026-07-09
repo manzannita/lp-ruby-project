@@ -259,6 +259,32 @@ class TabLexico(tk.Frame):
     def get_errores(self):
         return ruby_lexer.lexer.errores if hasattr(ruby_lexer.lexer, "errores") else []
 
+    def exportar_log(self, nombre_dev):
+        """Escribe logs/lexico-<dev>-<fecha>.txt. Devuelve el nombre o None."""
+        tokens_text = self.get_tokens_text()
+        errores = self.get_errores()
+        if not tokens_text.strip() or not self.tree.get_children():
+            messagebox.showwarning("Sin datos",
+                                   "Primero analiza un archivo en la pestaña Léxico.")
+            return None
+        now = datetime.now().strftime("%d-%m-%Y-%Hh%M")
+        filename = f"lexico-{nombre_dev}-{now}.txt"
+        os.makedirs("logs", exist_ok=True)
+        filepath = os.path.join("logs", filename)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(f"Desarrollador  : {nombre_dev}\n")
+            f.write(f"Fecha/Hora     : {now}\n")
+            f.write("=" * 65 + "\n")
+            f.write(tokens_text + "\n")
+            if errores:
+                f.write("\n" + "=" * 65 + "\n")
+                f.write("ERRORES LÉXICOS\n")
+                f.write("=" * 65 + "\n")
+                for err in errores:
+                    f.write(f"  Línea {err['linea']}: {err['mensaje']}\n")
+        messagebox.showinfo("Log exportado", f"Guardado en:\n{os.path.abspath(filepath)}")
+        return filename
+
 
 # =============================================================================
 # PESTAÑA SINTÁCTICO
@@ -267,6 +293,7 @@ class TabSintactico(tk.Frame):
     def __init__(self, parent, status_cb):
         super().__init__(parent, bg=BG_MAIN)
         self.status_cb = status_cb
+        self._ultimo_resultado = None
         self._build()
 
     def _build(self):
@@ -374,6 +401,7 @@ class TabSintactico(tk.Frame):
 
         try:
             resultado = ruby_parser.analizar(codigo)
+            self._ultimo_resultado = resultado
             errores = resultado["errores"]
 
             if resultado["ok"]:
@@ -398,6 +426,22 @@ class TabSintactico(tk.Frame):
             messagebox.showerror("Error interno", str(e))
             self.status_cb("Error durante el análisis")
 
+    def exportar_log(self, nombre_dev):
+        """Escribe logs/sintactico-<dev>-<fecha>.txt. Devuelve el nombre o None."""
+        if self._ultimo_resultado is None:
+            messagebox.showwarning("Sin datos",
+                                   "Primero analiza un código en la pestaña Sintáctico.")
+            return None
+        now = datetime.now().strftime("%d-%m-%Y-%Hh%M")
+        filename = f"sintactico-{nombre_dev}-{now}.txt"
+        os.makedirs("logs", exist_ok=True)
+        filepath = os.path.join("logs", filename)
+        texto = ruby_parser.construir_log(self._ultimo_resultado, nombre_dev, "(editor)")
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(texto)
+        messagebox.showinfo("Log exportado", f"Guardado en:\n{os.path.abspath(filepath)}")
+        return filename
+
 
 # =============================================================================
 # PESTAÑA SEMÁNTICO
@@ -406,7 +450,6 @@ class TabSemantico(tk.Frame):
     def __init__(self, parent, status_cb):
         super().__init__(parent, bg=BG_MAIN)
         self.status_cb = status_cb
-        self._nombre_dev = ""
         self._ultimo_resultado = None
         self._build()
 
@@ -431,8 +474,6 @@ class TabSemantico(tk.Frame):
         self._btn(btn_frame, "📂 Cargar .rb", self._cargar).pack(
             side="left", padx=(0, 6))
         self._btn(btn_frame, "🗑 Limpiar", self._limpiar).pack(
-            side="left", padx=(0, 6))
-        self._btn(btn_frame, "💾 Log", self._exportar_log).pack(
             side="left", padx=(0, 6))
         self._btn(btn_frame, "▶ Analizar", self._analizar,
                   accent=True).pack(side="left")
@@ -559,31 +600,22 @@ class TabSemantico(tk.Frame):
             messagebox.showerror("Error interno", str(e))
             self.status_cb("Error durante el análisis")
 
-    def _exportar_log(self):
+    def exportar_log(self, nombre_dev):
+        """Escribe logs/semantico-<dev>-<fecha>.txt. Devuelve el nombre o None."""
         if self._ultimo_resultado is None:
             messagebox.showwarning("Sin datos",
-                                   "Primero analiza un código antes de exportar.")
-            return
-        if not self._nombre_dev:
-            nombre = simpledialog.askstring(
-                "Nombre del desarrollador",
-                "Ingresa tu nombre (ej: AnnabellaSanchez):",
-                parent=self)
-            if not nombre:
-                return
-            self._nombre_dev = nombre.strip().replace(" ", "")
-
+                                   "Primero analiza un código en la pestaña Semántico.")
+            return None
         now = datetime.now().strftime("%d-%m-%Y-%Hh%M")
-        filename = f"semantico-{self._nombre_dev}-{now}.txt"
+        filename = f"semantico-{nombre_dev}-{now}.txt"
         os.makedirs("logs", exist_ok=True)
         filepath = os.path.join("logs", filename)
         texto = ruby_semantico.construir_log(
-            self._ultimo_resultado, self._nombre_dev, "(editor)")
+            self._ultimo_resultado, nombre_dev, "(editor)")
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(texto)
-        messagebox.showinfo("Log exportado",
-                            f"Guardado en:\n{os.path.abspath(filepath)}")
-        self.status_cb(f"Log exportado: {filename}")
+        messagebox.showinfo("Log exportado", f"Guardado en:\n{os.path.abspath(filepath)}")
+        return filename
 
 
 # =============================================================================
@@ -617,7 +649,7 @@ class App(tk.Tk):
         header.pack(fill="x")
         header.pack_propagate(False)
 
-        tk.Label(header, text="  Analizador Léxico de Ruby",
+        tk.Label(header, text="  Analizador de Ruby",
                  bg=FG_ACCENT, fg="#ffffff",
                  font=FONT_TITLE).pack(side="left", padx=12)
         tk.Label(header, text="ESPOL · Lenguajes de Programación",
@@ -637,6 +669,7 @@ class App(tk.Tk):
 
         nb = ttk.Notebook(self, style="Dark.TNotebook")
         nb.pack(fill="both", expand=True)
+        self.nb = nb
 
         self.tab_lexico = TabLexico(nb, self._set_status)
         nb.add(self.tab_lexico, text="  Léxico  ")
@@ -674,6 +707,13 @@ class App(tk.Tk):
         self.update_idletasks()
 
     def _exportar_log(self):
+        """Exporta el log de la pestaña ACTIVA (léxico/sintáctico/semántico)."""
+        tab = self.nb.nametowidget(self.nb.select())
+        if not hasattr(tab, "exportar_log"):
+            messagebox.showwarning("Sin exportación",
+                                   "Esta pestaña no genera log.")
+            return
+
         if not self._nombre_dev:
             nombre = simpledialog.askstring(
                 "Nombre del desarrollador",
@@ -683,34 +723,9 @@ class App(tk.Tk):
                 return
             self._nombre_dev = nombre.strip().replace(" ", "")
 
-        tokens_text = self.tab_lexico.get_tokens_text()
-        errores     = self.tab_lexico.get_errores()
-
-        if not tokens_text.strip():
-            messagebox.showwarning("Sin datos",
-                                   "Primero analiza un archivo antes de exportar.")
-            return
-
-        now      = datetime.now().strftime("%d-%m-%Y-%Hh%M")
-        filename = f"lexico-{self._nombre_dev}-{now}.txt"
-        os.makedirs("logs", exist_ok=True)
-        filepath = os.path.join("logs", filename)
-
-        with open(filepath, "w", encoding="utf-8") as f:
-            f.write(f"Desarrollador  : {self._nombre_dev}\n")
-            f.write(f"Fecha/Hora     : {now}\n")
-            f.write("=" * 65 + "\n")
-            f.write(tokens_text + "\n")
-            if errores:
-                f.write("\n" + "=" * 65 + "\n")
-                f.write("ERRORES LÉXICOS\n")
-                f.write("=" * 65 + "\n")
-                for err in errores:
-                    f.write(f"  Línea {err['linea']}: {err['mensaje']}\n")
-
-        messagebox.showinfo("Log exportado",
-                            f"Guardado en:\n{os.path.abspath(filepath)}")
-        self._set_status(f"Log exportado: {filename}")
+        filename = tab.exportar_log(self._nombre_dev)
+        if filename:
+            self._set_status(f"Log exportado: {filename}")
 
 
 # =============================================================================

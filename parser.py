@@ -605,29 +605,36 @@ def parsear_archivo(filepath):
     return analizar(source)
 
 
+def construir_log(resultado, author, fuente):
+    """Construye el texto del log de análisis sintáctico (reutilizado por la
+    GUI y por generate_log)."""
+    now = datetime.now().strftime('%d-%m-%Y-%Hh%M')
+    lineas = [
+        f'Archivo fuente : {fuente}',
+        f'Desarrollador  : {author}',
+        f'Fecha/Hora     : {now}',
+        f'Resultado      : {"VÁLIDO" if resultado["ok"] else "CON ERRORES"}',
+        f'Total errores  : {len(resultado["errores"])}',
+        '=' * 60,
+    ]
+    if resultado['errores']:
+        lineas.append('ERRORES SINTÁCTICOS')
+        lineas.append('=' * 60)
+        for err in resultado['errores']:
+            lineas.append(f'  Línea {err["linea"]}, Col {err["columna"]}: {err["mensaje"]}')
+    else:
+        lineas.append('Análisis sintáctico completado sin errores.')
+    return '\n'.join(lineas) + '\n'
+
+
 def generate_log(filepath, nombre_dev=""):
     resultado = parsear_archivo(filepath)
     now = datetime.now().strftime('%d-%m-%Y-%Hh%M')
-    base = os.path.splitext(os.path.basename(filepath))[0]
     author = nombre_dev or 'Desconocido'
     os.makedirs('logs', exist_ok=True)
     log_name = f'logs/sintactico-{author}-{now}.txt'
-
     with open(log_name, 'w', encoding='utf-8') as f:
-        f.write(f'Archivo fuente : {filepath}\n')
-        f.write(f'Desarrollador  : {author}\n')
-        f.write(f'Fecha/Hora     : {now}\n')
-        f.write(f'Resultado      : {"VÁLIDO" if resultado["ok"] else "CON ERRORES"}\n')
-        f.write(f'Total errores  : {len(resultado["errores"])}\n')
-        f.write('=' * 60 + '\n')
-        if resultado['errores']:
-            f.write('ERRORES SINTÁCTICOS\n')
-            f.write('=' * 60 + '\n')
-            for err in resultado['errores']:
-                f.write(f'  Línea {err["linea"]}, Col {err["columna"]}: {err["mensaje"]}\n')
-        else:
-            f.write('Análisis sintáctico completado sin errores.\n')
-
+        f.write(construir_log(resultado, author, filepath))
     print(f'Log generado: {log_name}')
     return log_name
 

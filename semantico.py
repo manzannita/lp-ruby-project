@@ -175,7 +175,7 @@ class AnalizadorSemantico:
         línea como último elemento entero."""
         if isinstance(nodo, tuple):
             if len(nodo) >= 2 and isinstance(nodo[-1], int) \
-                    and nodo[0] in ('var', 'literal', 'llamada'):
+                    and nodo[0] in ('var', 'literal', 'llamada', 'break', 'next'):
                 return nodo[-1]
             for hijo in nodo[1:]:
                 l = self._linea(hijo)
@@ -229,11 +229,23 @@ class AnalizadorSemantico:
         elif t == 'var':
             info = self.tabla.buscar(nodo[1])
             return info.get('tipo') if info else None
+        elif t == 'binop':
+            op = nodo[1]
+            if op in ('==', '!=', '<', '>', '<=', '>=', '&&', '||'):
+                return 'Boolean'
+            ti = self._inferir_tipo(nodo[2])
+            td = self._inferir_tipo(nodo[3])
+            if ti in ('Integer', 'Float') and td in ('Integer', 'Float'):
+                return 'Float' if 'Float' in (ti, td) else 'Integer'
+            if op in ('+', '*') and ti == td and ti in ('String', 'Array'):
+                return ti
+        elif t == 'not':
+            return 'Boolean'
         return None
 
-    def _declarar_objetivo(self, objetivo):
-        """Declara el destino de una asignación en la tabla de símbolos y
-        aplica la regla de constante inmutable."""
+    def _declarar_objetivo(self, objetivo, tipo=None):
+        """Declara el destino de una asignación en la tabla de símbolos
+        (guardando el tipo inferido) y aplica la regla de constante inmutable."""
         if not (isinstance(objetivo, tuple) and objetivo and objetivo[0] == 'var'):
             return
         nombre = objetivo[1]
@@ -247,19 +259,19 @@ class AnalizadorSemantico:
                            f"La constante '{nombre}' ya fue definida y no puede "
                            f"reasignarse", linea)
             else:
-                self.tabla.declarar_constante(nombre)
+                self.tabla.declarar_constante(nombre, tipo)
         elif clase == 'local':
-            self.tabla.declarar_local(nombre)
+            self.tabla.declarar_local(nombre, tipo)
         elif clase == 'global':
-            self.tabla.declarar_global(nombre)
+            self.tabla.declarar_global(nombre, tipo)
         elif clase == 'instancia':
-            self.tabla.declarar_instancia(nombre)
+            self.tabla.declarar_instancia(nombre, tipo)
 
     # ── Visitantes: asignaciones ──────────────────────────────────────────
     def _v_asignacion(self, nodo):
         # ('asignacion', ('var', nombre, ln), expr)
         self.visitar(nodo[2])            # el lado derecho se evalúa primero
-        self._declarar_objetivo(nodo[1])
+        self._declarar_objetivo(nodo[1], self._inferir_tipo(nodo[2]))
 
     def _v_asignacion_operador(self, nodo):
         # ('asignacion_operador', op, ('var', nombre, ln), expr)  ->  x += 1
@@ -462,11 +474,62 @@ class AnalizadorSemantico:
     # =========================================================================
     # INICIO APORTE INTEGRANTE 2 — Cristian Intriago
     # Reglas semánticas: compatibilidad de tipos en operaciones aritméticas
-    # y condición booleana en if/while. Reemplazar los hooks:
-    #   def regla_tipos_binop(self, nodo): ...
-    #   def regla_condicion(self, cond, contexto): ...
-    # (Issue #27)
+    # y condición booleana en if/while. (Issue #27)
     # =========================================================================
+    _OP_ARITMETICOS  = {'+', '-', '*', '/', '%', '**'}
+    _OP_BOOLEANOS    = {'==', '!=', '<', '>', '<=', '>=', '&&', '||'}
+    _TIPOS_NUMERICOS = {'Integer', 'Float'}
+
+    def regla_tipos_binop(self, nodo):
+        # ('binop', op, izq, der)
+        # ── REGLA (#27): no se permiten operaciones aritméticas entre tipos
+        #    incompatibles (p. ej. Integer + String) sin conversión explícita.
+        op = nodo[1]
+        if op not in self._OP_ARITMETICOS:
+            return
+        ti = self._inferir_tipo(nodo[2])
+        td = self._inferir_tipo(nodo[3])
+        # Si algún tipo es desconocido no se puede verificar sin arriesgar
+        # falsos positivos (variables sin tipo, retornos de método, etc.).
+        if ti is None or td is None:
+            return
+        if ti in self._TIPOS_NUMERICOS and td in self._TIPOS_NUMERICOS:
+            return
+        # + y * concatenan/repiten String y Array del mismo tipo.
+        if op in ('+', '*') and ti == td and ti in ('String', 'Array'):
+            return
+        self.error(CAT_OPERACIONES,
+                   f"Operación aritmética entre tipos incompatibles: "
+                   f"'{ti} {op} {td}' requiere conversión explícita",
+                   self._linea(nodo))
+
+    def regla_condicion(self, cond, contexto):
+        # ── REGLA (#27): la condición de un if/while debe evaluar a un valor
+        #    booleano o evaluable como tal.
+        if not self._condicion_evaluable(cond):
+            self.error(CAT_CONTROL,
+                       f"La condición de '{contexto}' debería ser una expresión "
+                       f"booleana (comparación o valor lógico)",
+                       self._linea(cond))
+
+    def _condicion_evaluable(self, cond):
+        """True si la condición produce (o puede producir) un booleano."""
+        if not isinstance(cond, tuple) or not cond:
+            return True
+        t = cond[0]
+        if t == 'binop':
+            return cond[1] in self._OP_BOOLEANOS
+        if t == 'not':
+            return True
+        if t == 'literal':
+            return self._inferir_tipo(cond) == 'Boolean'
+        # Literales de colección/rango no son condiciones booleanas válidas.
+        if t in ('array', 'hash', 'rango_inclusivo', 'rango_exclusivo'):
+            return False
+        # Variables, llamadas, métodos, indexación: su valor puede evaluarse
+        # como booleano (truthy/falsy). Se aceptan para no generar falsos
+        # positivos sobre expresiones de tipo desconocido.
+        return True
 
     # =========================================================================
     # FIN APORTE INTEGRANTE 2 — Cristian Intriago
