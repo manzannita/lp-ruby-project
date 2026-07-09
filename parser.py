@@ -546,6 +546,15 @@ def p_sentencia_impresion(p):
 def p_sentencia_comando(p):
     'sentencia : ID_LOCAL expresion'
     p[0] = ('comando', p[1], p[2])
+    
+# ── Sentencias break y next (solo válidas dentro de un bucle) ─────────────────
+def p_sentencia_break(p):
+    'sentencia : BREAK'
+    p[0] = ('break', p.lineno(1))
+
+def p_sentencia_next(p):
+    'sentencia : NEXT'
+    p[0] = ('next', p.lineno(1))
 
 # =============================================================================
 # FIN APORTE INTEGRANTE 3 — Valentina Falconi

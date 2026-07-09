@@ -481,7 +481,41 @@ class AnalizadorSemantico:
     #   def regla_aridad(self, nombre, args, linea): ...  (usar self.tabla.funciones)
     # (Issue #28)
     # =========================================================================
+    def regla_break_next(self, palabra, linea):
+        # ── REGLA (#28): break/next solo dentro de un bucle ──────────────────
+        if self._profundidad_bucle == 0:
+            self.error(
+                CAT_CONTROL,
+                f"'{palabra}' fuera de un bucle: solo puede usarse dentro "
+                f"de while, for o each",
+                linea
+            )
 
+    def regla_aridad(self, nombre, args, linea):
+        # ── REGLA (#28): aridad de la llamada debe coincidir con la def ───────
+        if not self.tabla.existe_funcion(nombre):
+            return
+        info = self.tabla.funciones[nombre]
+        n = len(args)
+        amin = info['aridad_min']
+        amax = info['aridad_max']
+        if amax == float('inf'):
+            if n < amin:
+                self.error(
+                    CAT_RETORNO,
+                    f"La función '{nombre}' espera al menos {amin} argumento(s) "
+                    f"pero se llamó con {n}",
+                    linea
+                )
+        else:
+            if n < amin or n > amax:
+                rango = f"{amin}" if amin == amax else f"{amin}–{amax}"
+                self.error(
+                    CAT_RETORNO,
+                    f"La función '{nombre}' espera {rango} argumento(s) "
+                    f"pero se llamó con {n}",
+                    linea
+                )
     # =========================================================================
     # FIN APORTE INTEGRANTE 3 — Valentina Falconi
     # =========================================================================
