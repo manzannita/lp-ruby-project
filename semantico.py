@@ -468,6 +468,76 @@ class AnalizadorSemantico:
     # (Issue #27)
     # =========================================================================
 
+    # Clasificación de operadores binarios producidos por el parser.
+    OPS_ARITMETICOS  = {'+', '-', '*', '/', '%', '**'}
+    OPS_COMPARACION  = {'==', '!=', '<', '>', '<=', '>=', '<=>'}
+    OPS_LOGICOS      = {'&&', '||', 'and', 'or'}
+
+    def _tipo_expresion(self, nodo):
+        """Extiende la inferencia base a expresiones compuestas: comparaciones,
+        lógicos y 'not' producen Boolean; los aritméticos, un tipo numérico o
+        el de sus operandos. Devuelve None si el tipo es desconocido."""
+        if not isinstance(nodo, tuple) or not nodo:
+            return None
+        if nodo[0] == 'not':
+            return 'Boolean'
+        if nodo[0] == 'binop':
+            op = nodo[1]
+            if op in self.OPS_COMPARACION or op in self.OPS_LOGICOS:
+                return 'Boolean'
+            if op in self.OPS_ARITMETICOS:
+                ti = self._tipo_expresion(nodo[2])
+                td = self._tipo_expresion(nodo[3])
+                if 'Float' in (ti, td):
+                    return 'Float'
+                if ti == td:
+                    return ti          # Integer, String (concatenación), etc.
+                return None
+            return None
+        return self._inferir_tipo(nodo)
+
+    def regla_tipos_binop(self, nodo):
+        # ── REGLA (#27): compatibilidad de tipos en operaciones aritméticas ──
+        # No se permiten operaciones como Integer + String sin conversión
+        # explícita. Solo se reporta cuando AMBOS tipos se conocen: si alguno
+        # es desconocido (variables sin tipo inferido) no se asume error,
+        # para evitar falsos positivos.
+        op = nodo[1]
+        if op not in self.OPS_ARITMETICOS:
+            return
+        ti = self._tipo_expresion(nodo[2])
+        td = self._tipo_expresion(nodo[3])
+        if ti is None or td is None:
+            return
+
+        numericos = ('Integer', 'Float')
+        compatible = ti in numericos and td in numericos
+        if op == '+':
+            # Ruby permite concatenar String + String y Array + Array.
+            compatible = compatible or (ti == td and ti in ('String', 'Array'))
+        elif op == '*':
+            # Ruby permite repetición: "ab" * 3, [1] * 3.
+            compatible = compatible or (ti in ('String', 'Array') and td == 'Integer')
+
+        if not compatible:
+            self.error(CAT_OPERACIONES,
+                       f"Tipos incompatibles en operación aritmética: "
+                       f"{ti} {op} {td} no está permitido sin conversión explícita",
+                       self._linea(nodo))
+
+    def regla_condicion(self, cond, contexto):
+        # ── REGLA (#27): la condición de if/while debe ser booleana ──────────
+        # Se acepta todo lo que evalúa (o puede evaluar) a booleano:
+        # comparaciones, lógicos, negaciones, true/false/nil y expresiones de
+        # tipo desconocido (variables, llamadas). Se reporta cuando el tipo se
+        # conoce y NO es booleano, como en «if 5» o «while "texto"».
+        tipo = self._tipo_expresion(cond)
+        if tipo is not None and tipo not in ('Boolean', 'Nil'):
+            self.error(CAT_CONTROL,
+                       f"La condición del '{contexto}' debe evaluar a un valor "
+                       f"booleano, pero es de tipo {tipo}",
+                       self._linea(cond))
+
     # =========================================================================
     # FIN APORTE INTEGRANTE 2 — Cristian Intriago
     # =========================================================================
