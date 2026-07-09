@@ -146,7 +146,8 @@ def p_lhs(p):
            | ID_CONSTANTE
            | ID_INSTANCIA
            | ID_GLOBAL'''
-    p[0] = ('var', p[1])
+    # Se adjunta la línea del identificador para el análisis semántico.
+    p[0] = ('var', p[1], p.lineno(1))
 
 
 # ── Condicional if / elsif / else / end  (issue #15) ─────────────────────────
@@ -240,7 +241,7 @@ def p_primario_literal(p):
                 | SYMBOL
                 | BOOLEAN
                 | NIL'''
-    p[0] = ('literal', p[1])
+    p[0] = ('literal', p[1], p.lineno(1))
 
 
 def p_primario_identificador(p):
@@ -248,7 +249,7 @@ def p_primario_identificador(p):
                 | ID_CONSTANTE
                 | ID_INSTANCIA
                 | ID_GLOBAL'''
-    p[0] = ('var', p[1])
+    p[0] = ('var', p[1], p.lineno(1))
 
 
 def p_primario_agrupado(p):
@@ -277,7 +278,7 @@ def p_arreglo(p):
 def p_llamada_funcion(p):
     '''llamada_funcion : ID_LOCAL LPAREN RPAREN
                        | ID_LOCAL LPAREN lista_expresiones RPAREN'''
-    p[0] = ('llamada', p[1], [] if len(p) == 4 else p[3])
+    p[0] = ('llamada', p[1], [] if len(p) == 4 else p[3], p.lineno(1))
 
 
 # Lista de expresiones separadas por coma (argumentos de llamada, elementos de
@@ -464,8 +465,10 @@ def p_sentencia_for(p):
     p[0] = ('para', p[2], p[4], p[5])
 
 # ── Iteración each: arreglo.each do |n| ... end ──────────────────────────────
+# Usa 'primario' (no 'expresion') para compartir el prefijo «primario DOT» con
+# la llamada a método y evitar el conflicto shift/reduce sobre el punto.
 def p_sentencia_each(p):
-    'sentencia : expresion DOT EACH DO PIPE ID_LOCAL PIPE cuerpo END'
+    'sentencia : primario DOT EACH DO PIPE ID_LOCAL PIPE cuerpo END'
     p[0] = ('cada', p[1], p[6], p[8])
 
 # ── Parámetro opcional con valor por defecto ─────────────────────────────────
@@ -478,12 +481,27 @@ def p_lista_parametros_opcional_extendida(p):
     p[0] = p[1] + [('param_opcional', p[3], p[5])]
 
 #issue #22: impresión y solicitud de datos
-# ── Llamada a método encadenado: gets.chomp ───────────────────────────────────
+# ── Llamada a método encadenada:  objeto.metodo  (p.ej. nota.to_f, gets.chomp)
+# Left-recursiva sobre 'primario' para admitir cadenas (a.b.c) y compartir el
+# prefijo con la iteración each.
 def p_primario_llamada_metodo(p):
-    'primario : ID_LOCAL DOT ID_LOCAL'
+    'primario : primario DOT ID_LOCAL'
     p[0] = ('llamada_metodo', p[1], p[3])
 
-# ── Impresión sin paréntesis: puts "Hola", print "texto" ─────────────────────
+# ── Entrada de datos:  gets  (y gets.chomp vía la regla de método) ───────────
+def p_primario_gets(p):
+    'primario : GETS'
+    p[0] = ('gets',)
+
+# ── Impresión:  puts "Hola", print "texto", puts (sin argumentos) ────────────
+def p_sentencia_impresion(p):
+    '''sentencia : PUTS lista_expresiones
+                 | PRINT lista_expresiones
+                 | PUTS
+                 | PRINT'''
+    p[0] = ('imprimir', p[1], p[2] if len(p) == 3 else [])
+
+# ── Comando genérico sin paréntesis:  nombre arg  (método definido por el user)
 def p_sentencia_comando(p):
     'sentencia : ID_LOCAL expresion'
     p[0] = ('comando', p[1], p[2])
